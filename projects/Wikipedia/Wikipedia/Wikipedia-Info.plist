@@ -58,6 +58,7 @@
 			<array>
 				<string>wikipedia</string>
 				<string>wikipedia-official</string>
+				<string>wikipedia-places</string>
 			</array>
 		</dict>
 	</array>
