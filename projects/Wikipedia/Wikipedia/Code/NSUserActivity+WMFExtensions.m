@@ -117,9 +117,16 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
 }
 
 + (nullable instancetype)wmf_activityForWikipediaScheme:(NSURL *)url {
-    if (![url.scheme isEqualToString:@"wikipedia"] && ![url.scheme isEqualToString:@"wikipedia-official"]) {
+    if (![url.scheme isEqualToString:@"wikipedia"] &&
+        ![url.scheme isEqualToString:@"wikipedia-official"] &&
+        ![url.scheme isEqualToString:@"wikipedia-places"]) {
         return nil;
     }
+    
+    fprintf(stderr, "Wikipedia URL received: %s\n", url.absoluteString.UTF8String);
+    fprintf(stderr, "Wikipedia URL path received: %s\n", url.path.UTF8String);
+    fprintf(stderr, "Wikipedia URL scheme: %s\n", url.scheme.UTF8String);
+    fprintf(stderr, "Wikipedia URL query: %s\n", url.query.UTF8String);
 
     if ([url.host isEqualToString:@"content"]) {
         return [self wmf_contentActivityWithURL:url];
