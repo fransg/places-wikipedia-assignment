@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CE1FCEDB3048A89300907ED5 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = CE1FCEDA3048A89300907ED5 /* README.md */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		CE38EF203048497900C3B4F9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,12 +28,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CE1FCEDA3048A89300907ED5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		CE38EF123048497700C3B4F9 /* Places.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Places.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE38EF1F3048497900C3B4F9 /* PlacesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlacesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE38EF293048497900C3B4F9 /* PlacesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlacesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		CE1FCED630489FDF00907ED5 /* Entities */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Entities;
+			sourceTree = "<group>";
+		};
 		CE38EF143048497700C3B4F9 /* Places */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Places;
@@ -75,7 +85,9 @@
 		CE38EF093048497700C3B4F9 = {
 			isa = PBXGroup;
 			children = (
+				CE1FCEDA3048A89300907ED5 /* README.md */,
 				CE38EF143048497700C3B4F9 /* Places */,
+				CE1FCED630489FDF00907ED5 /* Entities */,
 				CE38EF223048497900C3B4F9 /* PlacesTests */,
 				CE38EF2C3048497900C3B4F9 /* PlacesUITests */,
 				CE38EF133048497700C3B4F9 /* Products */,
@@ -108,6 +120,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				CE1FCED630489FDF00907ED5 /* Entities */,
 				CE38EF143048497700C3B4F9 /* Places */,
 			);
 			name = Places;
@@ -212,6 +225,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE1FCEDB3048A89300907ED5 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,7 +478,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FSFA45PW64;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "nl.app-en-vloed.PlacesTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -486,7 +500,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FSFA45PW64;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "nl.app-en-vloed.PlacesTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -507,6 +521,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FSFA45PW64;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "nl.app-en-vloed.PlacesUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -514,7 +529,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Places;
 			};
@@ -527,6 +542,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FSFA45PW64;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "nl.app-en-vloed.PlacesUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -534,7 +550,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Places;
 			};
