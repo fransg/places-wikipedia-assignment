@@ -1,0 +1,194 @@
+import Foundation
+import UIKit
+import Combine
+import WMFData
+
+@objc public class WMFDeveloperSettingsLocalizedStrings: NSObject {
+    let developerSettings: String
+    let doNotPostImageRecommendations: String
+    let sendAnalyticsToWMFLabs: String
+    let enableMoreDynamicTabsV2GroupC: String
+    let enableYearinReview: String
+    let bypassDonation: String
+    let forceEmailAuth: String
+
+    @objc public init(developerSettings: String, doNotPostImageRecommendations: String, sendAnalyticsToWMFLabs: String, enableMoreDynamicTabsV2GroupC: String, enableYearinReview: String, bypassDonation: String, forceEmailAuth: String, done: String) {
+        self.developerSettings = developerSettings
+        self.doNotPostImageRecommendations = doNotPostImageRecommendations
+        self.sendAnalyticsToWMFLabs = sendAnalyticsToWMFLabs
+        self.enableMoreDynamicTabsV2GroupC = enableMoreDynamicTabsV2GroupC
+        self.enableYearinReview = enableYearinReview
+        self.bypassDonation = bypassDonation
+        self.forceEmailAuth = forceEmailAuth
+    }
+}
+
+@MainActor
+@objc public class WMFDeveloperSettingsViewModel: NSObject, ObservableObject {
+
+    let localizedStrings: WMFDeveloperSettingsLocalizedStrings
+    let formViewModel: WMFFormViewModel
+
+    private var subscribers: Set<AnyCancellable> = []
+
+    @Published public var enableDeveloperMode: Bool = WMFDeveloperSettingsDataController.shared.developerSettingsEnableDeveloperMode {
+        didSet {
+            WMFDeveloperSettingsDataController.shared.developerSettingsEnableDeveloperMode = enableDeveloperMode
+        }
+    }
+
+    @Published public var showGamesV2: Bool = WMFDeveloperSettingsDataController.shared.showGamesV2 {
+        didSet {
+            WMFDeveloperSettingsDataController.shared.showGamesV2 = showGamesV2
+        }
+    }
+
+    @Published public var enableVisualEditingJourney: Bool = WMFDeveloperSettingsDataController.shared.enableVisualEditingJourney {
+        didSet {
+            WMFDeveloperSettingsDataController.shared.enableVisualEditingJourney = enableVisualEditingJourney
+        }
+    }
+
+    @Published public var forceFundraisingCampaignBanner: Bool = WMFDeveloperSettingsDataController.shared.forceFundraisingCampaignBanner {
+        didSet {
+            WMFDeveloperSettingsDataController.shared.forceFundraisingCampaignBanner = forceFundraisingCampaignBanner
+        }
+    }
+
+    @Published public var useTestWikiDonateConfigs: Bool = WMFDeveloperSettingsDataController.shared.useTestWikiDonateConfigs {
+        didSet {
+            WMFDeveloperSettingsDataController.shared.useTestWikiDonateConfigs = useTestWikiDonateConfigs
+        }
+    }
+
+    @Published public var enableDonationReminder: Bool = WMFDeveloperSettingsDataController.shared.enableDonationReminder {
+        didSet {
+            WMFDeveloperSettingsDataController.shared.enableDonationReminder = enableDonationReminder
+        }
+    }
+
+    @Published public var forceDonationReminderExperimentAssignment: WMFDonationReminderDataController.ExperimentAssignment? = WMFDeveloperSettingsDataController.shared.forceDonationReminderExperimentAssignment {
+        didSet {
+            WMFDeveloperSettingsDataController.shared.forceDonationReminderExperimentAssignment = forceDonationReminderExperimentAssignment
+        }
+    }
+
+    @Published public var bypassDonationReminderDailyLimit: Bool = WMFDeveloperSettingsDataController.shared.bypassDonationReminderDailyLimit {
+        didSet {
+            WMFDeveloperSettingsDataController.shared.bypassDonationReminderDailyLimit = bypassDonationReminderDailyLimit
+        }
+    }
+
+
+    @objc public init(localizedStrings: WMFDeveloperSettingsLocalizedStrings) {
+        self.localizedStrings = localizedStrings
+
+        let doNotPostImageRecommendationsEditItem = WMFFormItemSelectViewModel(title: localizedStrings.doNotPostImageRecommendations, isSelected: WMFDeveloperSettingsDataController.shared.doNotPostImageRecommendationsEdit)
+        let sendAnalyticsToWMFLabsItem = WMFFormItemSelectViewModel(title: localizedStrings.sendAnalyticsToWMFLabs, isSelected: WMFDeveloperSettingsDataController.shared.sendAnalyticsToWMFLabs)
+        let bypassDonationItem = WMFFormItemSelectViewModel(title: localizedStrings.bypassDonation, isSelected: WMFDeveloperSettingsDataController.shared.bypassDonation)
+        let forceEmailAuth = WMFFormItemSelectViewModel(title: localizedStrings.forceEmailAuth, isSelected: WMFDeveloperSettingsDataController.shared.forceEmailAuth)
+        let forceMaxArticleTabsTo5 = WMFFormItemSelectViewModel(title: "Force Max Article Tabs to 5", isSelected: WMFDeveloperSettingsDataController.shared.forceMaxArticleTabsTo5)
+        let enableMoreDynamicTabsV2GroupC = WMFFormItemSelectViewModel(title: localizedStrings.enableMoreDynamicTabsV2GroupC, isSelected: WMFDeveloperSettingsDataController.shared.enableMoreDynamicTabsV2GroupC)
+        let showYiR2025 = WMFFormItemSelectViewModel(title: "Show Year in Review 2025", isSelected: WMFDeveloperSettingsDataController.shared.showYiR2025)
+        let forceHcaptchaChallenge = WMFFormItemSelectViewModel(title: "Force hCaptcha Challenge", isSelected: WMFDeveloperSettingsDataController.shared.forceHCaptchaChallenge)
+        let allowGestureZoomArticleWebview = WMFFormItemSelectViewModel(title: "Allow pinch to zoom when reading articles", isSelected: WMFDeveloperSettingsDataController.shared.allowGestureZoomArticleWebview)
+        let enableHomePhase2 = WMFFormItemSelectViewModel(title: "Enable Home Phase 2", isSelected: WMFDeveloperSettingsDataController.shared.enableHomePhase2)
+
+        formViewModel = WMFFormViewModel(sections: [
+            WMFFormSectionSelectViewModel(items: [
+                enableHomePhase2,
+                doNotPostImageRecommendationsEditItem,
+                sendAnalyticsToWMFLabsItem,
+                bypassDonationItem,
+                forceEmailAuth,
+                forceMaxArticleTabsTo5,
+                enableMoreDynamicTabsV2GroupC,
+                showYiR2025,
+                forceHcaptchaChallenge,
+                allowGestureZoomArticleWebview
+            ], selectType: .multi)
+        ])
+
+        doNotPostImageRecommendationsEditItem.$isSelected
+            .sink { isSelected in WMFDeveloperSettingsDataController.shared.doNotPostImageRecommendationsEdit = isSelected }
+            .store(in: &subscribers)
+
+        sendAnalyticsToWMFLabsItem.$isSelected
+            .sink { isSelected in WMFDeveloperSettingsDataController.shared.sendAnalyticsToWMFLabs = isSelected }
+            .store(in: &subscribers)
+
+        bypassDonationItem.$isSelected
+            .sink { isSelected in WMFDeveloperSettingsDataController.shared.bypassDonation = isSelected }
+            .store(in: &subscribers)
+
+        forceEmailAuth.$isSelected
+            .sink { isSelected in WMFDeveloperSettingsDataController.shared.forceEmailAuth = isSelected }
+            .store(in: &subscribers)
+
+        forceMaxArticleTabsTo5.$isSelected
+            .sink { isSelected in WMFDeveloperSettingsDataController.shared.forceMaxArticleTabsTo5 = isSelected }
+            .store(in: &subscribers)
+
+        showYiR2025.$isSelected
+            .sink { isSelected in WMFDeveloperSettingsDataController.shared.showYiR2025 = isSelected }
+            .store(in: &subscribers)
+
+        forceHcaptchaChallenge.$isSelected
+            .sink { isSelected in WMFDeveloperSettingsDataController.shared.forceHCaptchaChallenge = isSelected }
+            .store(in: &subscribers)
+
+        allowGestureZoomArticleWebview.$isSelected
+            .sink { isSelected in WMFDeveloperSettingsDataController.shared.allowGestureZoomArticleWebview = isSelected }
+            .store(in: &subscribers)
+
+        enableHomePhase2.$isSelected
+            .sink { isSelected in WMFDeveloperSettingsDataController.shared.enableHomePhase2 = isSelected }
+            .store(in: &subscribers)
+    }
+
+    public var appInstallID: String? {
+        try? WMFDataEnvironment.current.crossProcessUserDefaultsStore?.load(key: WMFUserDefaultsKey.appInstallID.rawValue)
+    }
+
+    @MainActor
+    public func copyAppInstallID() {
+        guard let appInstallID else { return }
+        UIPasteboard.general.string = appInstallID
+        WMFToastPresenter.shared.show(WMFToastConfig(title: .init("App install ID copied")))
+    }
+
+    public func clearFundraisingCampaignPersistence() {
+        WMFDeveloperSettingsDataController.shared.clearFundraisingCampaignPersistence()
+        Task { @MainActor in
+            WMFToastPresenter.shared.show(WMFToastConfig(title: .init("Fundraising state cleared. The campaign banner can show again.")))
+        }
+    }
+
+    public func clearGamesPersistence() {
+        Task {
+            try? await WMFDeveloperSettingsDataController.shared.clearGamesPersistence()
+        }
+    }
+
+    public func clearDefaultEditMode() {
+        WMFSettingsDataController.shared.clearDefaultEditMode()
+        Task { @MainActor in
+            WMFToastPresenter.shared.show(WMFToastConfig(title: .init("Editing preferences cleared. The choose editor sheet will show again.")))
+        }
+    }
+}
+
+private final class YirLoginExperimentBindingCoordinator {
+    private var subscribers: Set<AnyCancellable> = []
+
+    init(control: WMFFormItemSelectViewModel, b: WMFFormItemSelectViewModel) {
+        control.$isSelected.sink { isSelected in
+            WMFDeveloperSettingsDataController.shared.enableYiRLoginExperimentControl = isSelected
+            if isSelected { b.isSelected = false }
+        }.store(in: &subscribers)
+        b.$isSelected.sink { isSelected in
+            WMFDeveloperSettingsDataController.shared.enableYiRLoginExperimentB = isSelected
+            if isSelected { control.isSelected = false }
+        }.store(in: &subscribers)
+    }
+}
