@@ -1,0 +1,44 @@
+# Apple signing / Fastlane secrets
+fastlane/AuthKey_*.p8
+fastlane/profiles/
+fastlane/build/
+*.mobileprovision
+*.provisionprofile
+*.p12
+*.cer
+*.certSigningRequest
+
+# macOS
+.DS_Store
+
+# Xcode - user-specific state (never commit, differs per machine/user)
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+
+# Xcode - build products / derived data
+build/
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Xcode - workspace settings that are machine-specific
+# (keep the workspace file itself, ignore only the per-user bits — xcuserdata above covers most of this)
+*.xcworkspace/xcuserdata/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Obj-C/Swift build artifacts sometimes left behind
+*.moved-aside
+*.o
+*.LinkFileList
+
+# Simulator / test artifacts
+*.gcno
+*.gcda
