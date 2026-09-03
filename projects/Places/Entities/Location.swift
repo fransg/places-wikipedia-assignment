@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Locations
-struct Locations: Codable {
+nonisolated struct Locations: Codable {
     let locations: [Location]
 
     enum CodingKeys: String, CodingKey {
@@ -17,7 +17,7 @@ struct Locations: Codable {
 }
 
 // MARK: - Location
-struct Location: Codable {
+nonisolated struct Location: Codable {
     let name: String?
     let lat: Double
     let long: Double

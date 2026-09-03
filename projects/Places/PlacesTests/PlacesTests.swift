@@ -43,6 +43,62 @@ struct PlacesTests {
         #expect(viewModel.isLoading == false)
         #expect(viewModel.errorMessage != nil)
     }
+
+    @Test func remoteRepositoryFetchesLocations() async throws {
+        let json = """
+        {
+            "locations": [
+                {
+                    "name": "Amsterdam",
+                    "lat": 52.354297,
+                    "long": 4.919669
+                },
+                {
+                    "name": "Castricum",
+                    "lat": 52.550292,
+                    "long": 4.669685
+                }
+            ]
+        }
+        """.data(using: .utf8)!
+        let url = URL(string: "https://example.com/success-locations.json")!
+        let repository = RemoteLocationsRepository(
+            url: url,
+            urlSession: .mock(url: url, data: json, statusCode: 200)
+        )
+
+        let locations = try await repository.fetchLocations()
+
+        #expect(locations.count == 2)
+        #expect(locations[0].name == "Amsterdam")
+        #expect(locations[0].lat == 52.354297)
+        #expect(locations[0].long == 4.919669)
+        #expect(locations[1].name == "Castricum")
+    }
+
+    @Test func remoteRepositoryThrowsForUnsuccessfulStatusCode() async throws {
+        let url = URL(string: "https://example.com/server-error.json")!
+        let repository = RemoteLocationsRepository(
+            url: url,
+            urlSession: .mock(url: url, data: Data(), statusCode: 500)
+        )
+
+        await #expect(throws: URLError.self) {
+            try await repository.fetchLocations()
+        }
+    }
+
+    @Test func remoteRepositoryThrowsForInvalidJSON() async throws {
+        let url = URL(string: "https://example.com/invalid-json.json")!
+        let repository = RemoteLocationsRepository(
+            url: url,
+            urlSession: .mock(url: url, data: Data("invalid json".utf8), statusCode: 200)
+        )
+
+        await #expect(throws: DecodingError.self) {
+            try await repository.fetchLocations()
+        }
+    }
 }
 
 private struct StubLocationsRepository: LocationsRepository {
@@ -50,5 +106,61 @@ private struct StubLocationsRepository: LocationsRepository {
 
     func fetchLocations() async throws -> [Location] {
         try result.get()
+    }
+}
+
+private final class MockURLProtocol: URLProtocol {
+    // Protecting this mutable shared state by using Actor or MainActor would have undesirable consequences. So handling this low level.
+    nonisolated(unsafe) private static var responses: [URL: (data: Data, statusCode: Int)] = [:]
+    private static let lock = NSLock()
+
+    static func register(data: Data, statusCode: Int, for url: URL) {
+        lock.withLock {
+            responses[url] = (data, statusCode)
+        }
+    }
+
+    private static func response(for url: URL) -> (data: Data, statusCode: Int)? {
+        lock.withLock {
+            responses[url]
+        }
+    }
+
+    override class func canInit(with request: URLRequest) -> Bool {
+        true
+    }
+
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+        request
+    }
+
+    override func startLoading() {
+        guard let url = request.url,
+              let response = Self.response(for: url),
+              let httpResponse = HTTPURLResponse(
+                url: url,
+                statusCode: response.statusCode,
+                httpVersion: nil,
+                headerFields: nil
+              ) else {
+            client?.urlProtocol(self, didFailWithError: URLError(.badServerResponse))
+            return
+        }
+
+        client?.urlProtocol(self, didReceive: httpResponse, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: response.data)
+        client?.urlProtocolDidFinishLoading(self)
+    }
+
+    override func stopLoading() {}
+}
+
+private extension URLSession {
+    static func mock(url: URL, data: Data, statusCode: Int) -> URLSession {
+        MockURLProtocol.register(data: data, statusCode: statusCode, for: url)
+
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        return URLSession(configuration: configuration)
     }
 }
