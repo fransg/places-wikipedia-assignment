@@ -13,26 +13,47 @@ struct LocationsView: View {
     
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-                .padding(.bottom, 24)
-            
             List(viewModel.locations, id: \.name) { location in
-                VStack(alignment: .leading) {
-                    Text(location.name ?? "Unnamed location")
-
-                    Text("\(location.lat), \(location.long)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                Button {
+                    onSelectLocation(location)
+                } label: {
+                    VStack(alignment: .leading) {
+                        Text(location.name ?? "Unnamed location")
+                            .foregroundStyle(.primary)
+                            .accessibilityIdentifier("LocationName")
+                        
+                        Text("\(location.lat), \(location.long)")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .accessibilityIdentifier("LocationCoordinates")
+                    }
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel(location.name ?? "Unnamed location")
+                .accessibilityValue("Latitude \(location.lat), longitude \(location.long)")
+                .accessibilityHint("Opens this location in Wikipedia")
             }
             .task {
                 await viewModel.loadLocations()
             }
         }
-        .padding()
+        .padding(0)
+        .navigationTitle("Locations")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    print("Tapped Add button")
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .accessibilityIdentifier("AddLocation")
+                .accessibilityLabel("Add location")
+            }
+        }
+    }
+    
+    private func onSelectLocation(_ location: Location) {
+        print("Tapped location: \(location)")
     }
 }
 

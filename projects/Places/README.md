@@ -24,7 +24,7 @@ Branching strategy:
 Plan:
 v Remote repository
 v Remote repo tests
-- View (re-use ContentView?)
+v View (re-use ContentView?)
 - Link to Wikipedia
 - Wikipedia-app:
   - Receive link
@@ -34,3 +34,4 @@ v Remote repo tests
 Decide:
 - Support dark mode or not?
 - Orientations to support? Just portrait?
+- Whether to rename 'location' to 'place'. It feels inconsistent now.

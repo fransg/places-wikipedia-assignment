@@ -11,7 +11,9 @@ import SwiftUI
 struct PlacesApp: App {
     var body: some Scene {
         WindowGroup {
-            LocationsView()
+            NavigationStack {
+                LocationsView()
+            }
         }
     }
 }
