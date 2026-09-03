@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+@import CoreLocation;
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSUInteger, WMFUserActivityType) {
@@ -27,6 +28,7 @@ extern NSString *const WMFNavigateToActivityNotification;
 + (instancetype)wmf_exploreViewActivity;
 + (instancetype)wmf_savedPagesViewActivity;
 + (instancetype)wmf_activityTabActivity;
++ (instancetype)wmf_placesActivityWithLatitude:(CLLocationDegrees)latitude longitude:(CLLocationDegrees)longitude;
 
 + (instancetype)wmf_searchViewActivity;
 + (instancetype)wmf_searchResultsActivitySearchSiteURL:(NSURL *)url searchTerm:(NSString *)searchTerm;

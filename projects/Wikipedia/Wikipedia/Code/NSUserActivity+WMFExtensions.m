@@ -3,8 +3,26 @@
 
 @import CoreSpotlight;
 @import MobileCoreServices;
+@import CoreLocation;
 
 NSString *const WMFNavigateToActivityNotification = @"WMFNavigateToActivityNotification";
+static NSString *const WMFPlacesLatitudeKey = @"WMFPlacesLatitude";
+static NSString *const WMFPlacesLongitudeKey = @"WMFPlacesLongitude";
+
+static BOOL WMFDoubleFromString(NSString *string, double *value) {
+    if (string.length == 0 || value == NULL) {
+        return NO;
+    }
+
+    NSScanner *scanner = [NSScanner scannerWithString:string];
+    double parsedValue = 0;
+    if (![scanner scanDouble:&parsedValue] || !scanner.isAtEnd) {
+        return NO;
+    }
+
+    *value = parsedValue;
+    return YES;
+}
 
 // Use to suppress "User-facing text should use localized string macro" Analyzer warning
 // where appropriate.
@@ -62,6 +80,7 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
 + (instancetype)wmf_placesActivityWithURL:(NSURL *)activityURL {
     NSURLComponents *components = [NSURLComponents componentsWithURL:activityURL resolvingAgainstBaseURL:NO];
     NSURL *articleURL = nil;
+
     for (NSURLQueryItem *item in components.queryItems) {
         if ([item.name isEqualToString:@"WMFArticleURL"]) {
             NSString *articleURLString = item.value;
@@ -72,6 +91,48 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
     NSUserActivity *activity = [self wmf_pageActivityWithName:@"Places"];
     activity.webpageURL = articleURL;
     return activity;
+}
+
++ (instancetype)wmf_placesActivityWithLatitude:(CLLocationDegrees)latitude longitude:(CLLocationDegrees)longitude {
+    NSUserActivity *activity = [self wmf_pageActivityWithName:@"Places"];
+    activity.userInfo = @{
+        @"WMFPage": @"Places",
+        WMFPlacesLatitudeKey: @(latitude),
+        WMFPlacesLongitudeKey: @(longitude)
+    };
+    return activity;
+}
+
++ (BOOL)wmf_placesCoordinateFromOpenPlaceURL:(NSURL *)url latitude:(CLLocationDegrees *)latitude longitude:(CLLocationDegrees *)longitude {
+    if (latitude == NULL || longitude == NULL) {
+        return NO;
+    }
+
+    NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
+    NSString *latitudeString = nil;
+    NSString *longitudeString = nil;
+
+    for (NSURLQueryItem *item in components.queryItems) {
+        if ([item.name isEqualToString:@"lat"]) {
+            latitudeString = item.value;
+        } else if ([item.name isEqualToString:@"long"]) {
+            longitudeString = item.value;
+        }
+    }
+
+    double parsedLatitude = 0;
+    double parsedLongitude = 0;
+    if (!WMFDoubleFromString(latitudeString, &parsedLatitude) || !WMFDoubleFromString(longitudeString, &parsedLongitude)) {
+        return NO;
+    }
+
+    if (!CLLocationCoordinate2DIsValid(CLLocationCoordinate2DMake(parsedLatitude, parsedLongitude))) {
+        return NO;
+    }
+
+    *latitude = parsedLatitude;
+    *longitude = parsedLongitude;
+    return YES;
 }
 
 + (BOOL)wmf_isExploreFeedEnabled {
@@ -123,7 +184,7 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
         return nil;
     }
     
-    fprintf(stderr, "Wikipedia URL received: %s\n", url.absoluteString.UTF8String);
+    fprintf(stderr, "Wikipedia URL received stage 1: %s\n", url.absoluteString.UTF8String);
     fprintf(stderr, "Wikipedia URL path received: %s\n", url.path.UTF8String);
     fprintf(stderr, "Wikipedia URL scheme: %s\n", url.scheme.UTF8String);
     fprintf(stderr, "Wikipedia URL query: %s\n", url.query.UTF8String);
@@ -164,6 +225,16 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
         components.scheme = @"https";
         return [self wmf_searchResultsActivitySearchSiteURL:components.URL
                                                  searchTerm:[url wmf_valueForQueryKey:@"search"]];
+    } else if ([url.scheme isEqualToString:@"wikipedia-places"] &&
+               [url.host isEqualToString:@"openPlace"]) {
+        CLLocationDegrees latitude = 0;
+        CLLocationDegrees longitude = 0;
+        if (![self wmf_placesCoordinateFromOpenPlaceURL:url latitude:&latitude longitude:&longitude]) {
+            return nil;
+        }
+
+        fprintf(stderr, "Wikipedia Places openPlace parsed: lat=%f long=%f\n", latitude, longitude);
+        return [self wmf_placesActivityWithLatitude:latitude longitude:longitude];
     } else {
         NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
         components.scheme = @"https";

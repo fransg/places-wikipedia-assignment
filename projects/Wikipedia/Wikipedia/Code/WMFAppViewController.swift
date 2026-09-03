@@ -1325,7 +1325,11 @@ final class WMFAppViewController: UITabBarController, AppTabBarDelegate {
             dismissPresentedViewControllers()
             selectedIndex = WMFAppTabType.places.rawValue
             currentTabNavigationController?.popToRootViewController(animated: animated)
-            if let articleURL = activity.wmf_linkURL() {
+            if let latitude = activity.userInfo?["WMFPlacesLatitude"] as? Double,
+               let longitude = activity.userInfo?["WMFPlacesLongitude"] as? Double {
+                let message = String(format: "Wikipedia Places activity received: lat=%f long=%f\n", latitude, longitude)
+                FileHandle.standardError.write(Data(message.utf8))
+            } else if let articleURL = activity.wmf_linkURL() {
                 placesViewController.updateViewModeToMap()
                 placesViewController.showArticleURL(articleURL)
             }

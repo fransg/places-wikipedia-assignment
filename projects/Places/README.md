@@ -26,9 +26,10 @@ v Remote repository
 v Remote repo tests
 v View (re-use ContentView?)
 v Link to Wikipedia (sending side)
-- Wikipedia-app:
-  - Receive link
-  - Perform navigation to Places tab and position map to received location.
+- Wikipedia-app: (note: follow wmf and other naming conventions in that app)
+  v Receive link
+  v Parse link and perform navigation to Places tab
+  - Position map to received location.
 - Some accessibility features
 
 Decide:
