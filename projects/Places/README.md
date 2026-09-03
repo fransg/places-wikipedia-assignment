@@ -25,7 +25,7 @@ Plan:
 v Remote repository
 v Remote repo tests
 v View (re-use ContentView?)
-- Link to Wikipedia
+v Link to Wikipedia (sending side)
 - Wikipedia-app:
   - Receive link
   - Perform navigation to Places tab and position map to received location.

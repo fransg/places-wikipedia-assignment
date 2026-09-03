@@ -34,6 +34,16 @@
 		CE38EF293048497900C3B4F9 /* PlacesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlacesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CE32AF193049A34D009B3553 /* Exceptions for "Places" folder in "Places" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = CE38EF113048497700C3B4F9 /* Places */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CE1FCED630489FDF00907ED5 /* Entities */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -42,6 +52,9 @@
 		};
 		CE38EF143048497700C3B4F9 /* Places */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CE32AF193049A34D009B3553 /* Exceptions for "Places" folder in "Places" target */,
+			);
 			path = Places;
 			sourceTree = "<group>";
 		};
@@ -414,6 +427,7 @@
 				DEVELOPMENT_TEAM = FSFA45PW64;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Places/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -447,6 +461,7 @@
 				DEVELOPMENT_TEAM = FSFA45PW64;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Places/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
