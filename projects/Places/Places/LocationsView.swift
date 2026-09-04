@@ -19,33 +19,7 @@ struct LocationsView: View {
     
     var body: some View {
         ZStack {
-            List {
-                ForEach(viewModel.locations, id: \.name) { location in
-                    Button {
-                        onSelectLocation(location)
-                    } label: {
-                        VStack(alignment: .leading) {
-                            Text(location.name ?? "Unnamed location")
-                                .foregroundStyle(.primary)
-                                .accessibilityIdentifier("LocationName")
-                            
-                            Text(formatCoordinates(latitude: location.lat, longitude: location.long))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .accessibilityIdentifier("LocationCoordinates")
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(location.name ?? "Unnamed location")
-                    .accessibilityValue(formatAccessibilityCoordinates(latitude: location.lat, longitude: location.long))
-                    .accessibilityHint("Opens this location in Wikipedia")
-                }
-                .onDelete { offsets in
-                    viewModel.deleteLocations(at: offsets)
-                }
-            }
+            locationsList
 
             if viewModel.locations.isEmpty && !viewModel.isLoading {
                 ContentUnavailableView(
@@ -93,6 +67,39 @@ struct LocationsView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text("The Wikipedia app could not be opened. Please make sure the modified Wikipedia app is installed.")
+        }
+    }
+    
+    private var locationsList: some View {
+        List {
+            ForEach(viewModel.locations, id: \.name) { location in
+                Button {
+                    onSelectLocation(location)
+                } label: {
+                    VStack(alignment: .leading) {
+                        Text(location.name ?? "Unnamed location")
+                            .foregroundStyle(.primary)
+                            .accessibilityIdentifier("LocationName")
+                        
+                        Text(formatCoordinates(latitude: location.lat, longitude: location.long))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .accessibilityIdentifier("LocationCoordinates")
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(location.name ?? "Unnamed location")
+                .accessibilityValue(formatAccessibilityCoordinates(latitude: location.lat, longitude: location.long))
+                .accessibilityHint("Opens this location in Wikipedia")
+            }
+            .onDelete { offsets in
+                viewModel.deleteLocations(at: offsets)
+            }
+        }
+        .refreshable {
+            await viewModel.loadLocations()
         }
     }
     

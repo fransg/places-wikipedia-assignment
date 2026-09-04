@@ -95,7 +95,7 @@ v Some accessibility features
   v Dynamic type (out of the box)
   v Accessibility identifiers (can be used by UI-test)
 v Polish:
-    v add composition root, app icon, handling nil name, isLoading state, handle empty state, point vs comma handling, add UI-test
+    v add composition root, app icon, handling nil name, isLoading state, handle empty state, point vs comma handling, add UI-test, make view refreshable
 v Verify:
   v Feature complete
   v Bonus points (Swift Concurrency and Accessibility.. and a UI-test)
