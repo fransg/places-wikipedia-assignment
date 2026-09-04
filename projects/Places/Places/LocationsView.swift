@@ -120,6 +120,13 @@ private struct AddLocationView: View {
     @State private var latitude = ""
     @State private var longitude = ""
     @State private var hasSubmitted = false
+    @AccessibilityFocusState private var focusedField: Field?
+
+    private enum Field: Hashable {
+        case name
+        case latitude
+        case longitude
+    }
 
     private var trimmedName: String {
         name.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -180,6 +187,7 @@ private struct AddLocationView: View {
                     TextField("Name", text: $name)
                         .textInputAutocapitalization(.words)
                         .accessibilityIdentifier("CustomLocationName")
+                        .accessibilityFocused($focusedField, equals: .name)
 
                     validationText(nameError)
                 }
@@ -188,6 +196,8 @@ private struct AddLocationView: View {
                     TextField("Latitude", text: $latitude)
                         .keyboardType(.numbersAndPunctuation)
                         .accessibilityIdentifier("CustomLocationLatitude")
+                        .accessibilityHint("Enter a value between -90 and 90")
+                        .accessibilityFocused($focusedField, equals: .latitude)
 
                     validationText(latitudeError)
                 }
@@ -196,6 +206,8 @@ private struct AddLocationView: View {
                     TextField("Longitude", text: $longitude)
                         .keyboardType(.numbersAndPunctuation)
                         .accessibilityIdentifier("CustomLocationLongitude")
+                        .accessibilityHint("Enter a value between -180 and 180")
+                        .accessibilityFocused($focusedField, equals: .longitude)
 
                     validationText(longitudeError)
                 }
@@ -234,10 +246,21 @@ private struct AddLocationView: View {
         guard isValid,
               let latitudeValue,
               let longitudeValue else {
+            focusFirstInvalidField()
             return
         }
 
         onAdd(Location(name: trimmedName, lat: latitudeValue, long: longitudeValue))
+    }
+
+    private func focusFirstInvalidField() {
+        if nameError != nil {
+            focusedField = .name
+        } else if latitudeError != nil {
+            focusedField = .latitude
+        } else if longitudeError != nil {
+            focusedField = .longitude
+        }
     }
 }
 

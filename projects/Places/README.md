@@ -33,7 +33,10 @@ v Wikipedia-app: (note: follow wmf and other naming conventions in that app)
   v Parse link and perform navigation to Places tab
   v Position map to received location.
 v Add (and delete) locations, simple UI first, optionally using MapKit later
-- Some accessibility features
+v Some accessibility features
+  v Voice over on main page and Add Location dialog
+  v Dynamic type (out of the box)
+  v Accessibility identifiers (can be used by UI-test)
 - Polish:
     v add composition root, app icon, handling nil name, isLoading state, handle empty state, point vs comma handling
 - Verify (feature complete? Bonus points? Cleanup any debugging code, regression test Wiki places link)
