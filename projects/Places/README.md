@@ -35,8 +35,7 @@ v Wikipedia-app: (note: follow wmf and other naming conventions in that app)
 v Add (and delete) locations, simple UI first, optionally using MapKit later
 - Some accessibility features
 - Polish:
-    - point vs comma handling, handle empty state..)
-    v add composition root, app icon, handling nil name, isLoading state
+    v add composition root, app icon, handling nil name, isLoading state, handle empty state, point vs comma handling
 - Verify (feature complete? Bonus points? Cleanup any debugging code, regression test Wiki places link)
 
 Decide:

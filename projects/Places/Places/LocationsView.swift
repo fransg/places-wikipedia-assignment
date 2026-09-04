@@ -29,7 +29,7 @@ struct LocationsView: View {
                                 .foregroundStyle(.primary)
                                 .accessibilityIdentifier("LocationName")
                             
-                            Text("\(location.lat), \(location.long)")
+                            Text(formatCoordinates(latitude: location.lat, longitude: location.long))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .accessibilityIdentifier("LocationCoordinates")
@@ -39,7 +39,7 @@ struct LocationsView: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(location.name ?? "Unnamed location")
-                    .accessibilityValue("Latitude \(location.lat), longitude \(location.long)")
+                    .accessibilityValue(formatAccessibilityCoordinates(latitude: location.lat, longitude: location.long))
                     .accessibilityHint("Opens this location in Wikipedia")
                 }
                 .onDelete { offsets in
@@ -138,7 +138,7 @@ private struct AddLocationView: View {
     }
 
     private var latitudeValue: Double? {
-        Double(latitude.trimmingCharacters(in: .whitespacesAndNewlines))
+        parseCoordinate(latitude)
     }
 
     private var latitudeError: String? {
@@ -154,7 +154,7 @@ private struct AddLocationView: View {
     }
 
     private var longitudeValue: Double? {
-        Double(longitude.trimmingCharacters(in: .whitespacesAndNewlines))
+        parseCoordinate(longitude)
     }
 
     private var longitudeError: String? {
@@ -240,6 +240,35 @@ private struct AddLocationView: View {
         onAdd(Location(name: trimmedName, lat: latitudeValue, long: longitudeValue))
     }
 }
+
+private func formatCoordinates(latitude: Double, longitude: Double) -> String {
+    "\(formatCoordinate(latitude)); \(formatCoordinate(longitude))"
+}
+
+private func formatAccessibilityCoordinates(latitude: Double, longitude: Double) -> String {
+    "Latitude \(formatCoordinate(latitude)); longitude \(formatCoordinate(longitude))"
+}
+
+private func formatCoordinate(_ coordinate: Double) -> String {
+    coordinate.formatted(.number.precision(.fractionLength(6)))
+}
+
+private func parseCoordinate(_ text: String) -> Double? {
+    let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+    if let number = coordinateFormatter.number(from: trimmedText) {
+        return number.doubleValue
+    }
+
+    return Double(trimmedText.replacingOccurrences(of: ",", with: "."))
+}
+
+private let coordinateFormatter: NumberFormatter = {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    formatter.locale = .current
+    return formatter
+}()
 
 #Preview {
     LocationsView(
