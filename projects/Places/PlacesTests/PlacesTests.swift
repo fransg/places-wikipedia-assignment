@@ -44,6 +44,21 @@ struct PlacesTests {
         #expect(viewModel.errorMessage != nil)
     }
 
+    @MainActor
+    @Test func addLocationAppendsLocation() async throws {
+        let viewModel = LocationsViewModel(
+            repository: StubLocationsRepository(result: .success([]))
+        )
+        let location = Location(name: "Utrecht", lat: 52.0907, long: 5.1214)
+
+        viewModel.addLocation(location)
+
+        #expect(viewModel.locations.count == 1)
+        #expect(viewModel.locations[0].name == "Utrecht")
+        #expect(viewModel.locations[0].lat == 52.0907)
+        #expect(viewModel.locations[0].long == 5.1214)
+    }
+
     @Test func remoteRepositoryFetchesLocations() async throws {
         let json = """
         {

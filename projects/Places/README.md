@@ -32,10 +32,13 @@ v Wikipedia-app: (note: follow wmf and other naming conventions in that app)
   v Position map to received location.
 - Add (and delete) locations, simple UI first, optionally using MapKit later
 - Some accessibility features
-- Polish
+- Polish (composition root, app icon, point vs comma handling, ..)
 - Verify (feature complete? Bonus points? Cleanup any debugging code, regression test Wiki places link)
 
 Decide:
 - Support dark mode or not?
 - Orientations to support? Just portrait?
 - Whether to rename 'location' to 'place'. It feels inconsistent now.
+v Validation on add location input:
+    v Name mandatory and no duplicates allowed
+    v Validate lat numeric -90..+90 and numeric long -180..+180 

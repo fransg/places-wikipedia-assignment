@@ -38,4 +38,8 @@ final class LocationsViewModel {
             errorMessage = "Could not load locations. Please try again."
         }
     }
+
+    func addLocation(_ location: Location) {
+        locations.append(location)
+    }
 }

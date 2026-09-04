@@ -11,6 +11,7 @@ struct LocationsView: View {
     
     @State private var viewModel = LocationsViewModel(repository: RemoteLocationsRepository())
     @State private var isShowingCannotOpenWikipediaAlert = false
+    @State private var isShowingAddLocation = false
     
     var body: some View {
         VStack {
@@ -45,12 +46,22 @@ struct LocationsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    print("Tapped Add button")
+                    isShowingAddLocation = true
                 } label: {
                     Image(systemName: "plus")
                 }
                 .accessibilityIdentifier("AddLocation")
                 .accessibilityLabel("Add location")
+            }
+        }
+        .sheet(isPresented: $isShowingAddLocation) {
+            NavigationStack {
+                AddLocationView(existingLocations: viewModel.locations) { location in
+                    viewModel.addLocation(location)
+                    isShowingAddLocation = false
+                } onCancel: {
+                    isShowingAddLocation = false
+                }
             }
         }
         .alert("Cannot open Wikipedia", isPresented: $isShowingCannotOpenWikipediaAlert) {
@@ -72,6 +83,136 @@ struct LocationsView: View {
         } else {
             isShowingCannotOpenWikipediaAlert = true
         }
+    }
+}
+
+private struct AddLocationView: View {
+    let existingLocations: [Location]
+    let onAdd: (Location) -> Void
+    let onCancel: () -> Void
+
+    @State private var name = ""
+    @State private var latitude = ""
+    @State private var longitude = ""
+    @State private var hasSubmitted = false
+
+    private var trimmedName: String {
+        name.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var nameError: String? {
+        if trimmedName.isEmpty {
+            return "Name is required."
+        }
+
+        if existingLocations.contains(where: { $0.name?.localizedCaseInsensitiveCompare(trimmedName) == .orderedSame }) {
+            return "A location with this name already exists."
+        }
+
+        return nil
+    }
+
+    private var latitudeValue: Double? {
+        Double(latitude.trimmingCharacters(in: .whitespacesAndNewlines))
+    }
+
+    private var latitudeError: String? {
+        guard let latitudeValue else {
+            return "Latitude must be a number."
+        }
+
+        if !(-90...90).contains(latitudeValue) {
+            return "Latitude must be between -90 and 90."
+        }
+
+        return nil
+    }
+
+    private var longitudeValue: Double? {
+        Double(longitude.trimmingCharacters(in: .whitespacesAndNewlines))
+    }
+
+    private var longitudeError: String? {
+        guard let longitudeValue else {
+            return "Longitude must be a number."
+        }
+
+        if !(-180...180).contains(longitudeValue) {
+            return "Longitude must be between -180 and 180."
+        }
+
+        return nil
+    }
+
+    private var isValid: Bool {
+        nameError == nil && latitudeError == nil && longitudeError == nil
+    }
+
+    var body: some View {
+        Form {
+            Section("Please fill in the details:") {
+                VStack(alignment: .leading, spacing: 4) {
+                    TextField("Name", text: $name)
+                        .textInputAutocapitalization(.words)
+                        .accessibilityIdentifier("CustomLocationName")
+
+                    validationText(nameError)
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    TextField("Latitude", text: $latitude)
+                        .keyboardType(.numbersAndPunctuation)
+                        .accessibilityIdentifier("CustomLocationLatitude")
+
+                    validationText(latitudeError)
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    TextField("Longitude", text: $longitude)
+                        .keyboardType(.numbersAndPunctuation)
+                        .accessibilityIdentifier("CustomLocationLongitude")
+
+                    validationText(longitudeError)
+                }
+            }
+        }
+        .navigationTitle("Add Location")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel", role: .cancel) {
+                    onCancel()
+                }
+            }
+
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Add") {
+                    addLocation()
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func validationText(_ text: String?) -> some View {
+        if hasSubmitted, let text {
+            Text(text)
+                .font(.caption)
+                .foregroundStyle(.red)
+                .accessibilityLabel(text)
+        }
+    }
+
+    private func addLocation() {
+        hasSubmitted = true
+
+        guard isValid,
+              let latitudeValue,
+              let longitudeValue else {
+            return
+        }
+
+        onAdd(Location(name: trimmedName, lat: latitudeValue, long: longitudeValue))
     }
 }
 
