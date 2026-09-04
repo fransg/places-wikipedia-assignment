@@ -47,6 +47,14 @@ struct LocationsView: View {
                 }
             }
 
+            if viewModel.locations.isEmpty && !viewModel.isLoading {
+                ContentUnavailableView(
+                    "No Locations",
+                    systemImage: "mappin.slash",
+                    description: Text("Tap Add to create a custom location.")
+                )
+            }
+
             if viewModel.isLoading {
                 ProgressView("Loading locations")
                     .padding()
