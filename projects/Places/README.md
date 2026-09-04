@@ -34,7 +34,9 @@ v Wikipedia-app: (note: follow wmf and other naming conventions in that app)
   v Position map to received location.
 v Add (and delete) locations, simple UI first, optionally using MapKit later
 - Some accessibility features
-- Polish (composition root, app icon, point vs comma handling, handling nil name, handle empty state, ..)
+- Polish:
+    - composition root, point vs comma handling, handling nil name, handle empty state, ..)
+    v app icon
 - Verify (feature complete? Bonus points? Cleanup any debugging code, regression test Wiki places link)
 
 Decide:
