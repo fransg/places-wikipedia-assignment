@@ -15,27 +15,32 @@ struct LocationsView: View {
     
     var body: some View {
         VStack {
-            List(viewModel.locations, id: \.name) { location in
-                Button {
-                    onSelectLocation(location)
-                } label: {
-                    VStack(alignment: .leading) {
-                        Text(location.name ?? "Unnamed location")
-                            .foregroundStyle(.primary)
-                            .accessibilityIdentifier("LocationName")
-                        
-                        Text("\(location.lat), \(location.long)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .accessibilityIdentifier("LocationCoordinates")
+            List {
+                ForEach(viewModel.locations, id: \.name) { location in
+                    Button {
+                        onSelectLocation(location)
+                    } label: {
+                        VStack(alignment: .leading) {
+                            Text(location.name ?? "Unnamed location")
+                                .foregroundStyle(.primary)
+                                .accessibilityIdentifier("LocationName")
+                            
+                            Text("\(location.lat), \(location.long)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .accessibilityIdentifier("LocationCoordinates")
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(location.name ?? "Unnamed location")
+                    .accessibilityValue("Latitude \(location.lat), longitude \(location.long)")
+                    .accessibilityHint("Opens this location in Wikipedia")
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel(location.name ?? "Unnamed location")
-                .accessibilityValue("Latitude \(location.lat), longitude \(location.long)")
-                .accessibilityHint("Opens this location in Wikipedia")
+                .onDelete { offsets in
+                    viewModel.deleteLocations(at: offsets)
+                }
             }
             .task {
                 await viewModel.loadLocations()

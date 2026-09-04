@@ -42,4 +42,10 @@ final class LocationsViewModel {
     func addLocation(_ location: Location) {
         locations.append(location)
     }
+
+    func deleteLocations(at offsets: IndexSet) {
+        for offset in offsets.sorted(by: >) {
+            locations.remove(at: offset)
+        }
+    }
 }

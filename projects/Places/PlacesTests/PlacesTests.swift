@@ -59,6 +59,22 @@ struct PlacesTests {
         #expect(viewModel.locations[0].long == 5.1214)
     }
 
+    @MainActor
+    @Test func deleteLocationsRemovesLocationsAtOffsets() async throws {
+        let viewModel = LocationsViewModel(
+            repository: StubLocationsRepository(result: .success([]))
+        )
+        viewModel.addLocation(Location(name: "Amsterdam", lat: 52.354297, long: 4.919669))
+        viewModel.addLocation(Location(name: "Castricum", lat: 52.550292, long: 4.669685))
+        viewModel.addLocation(Location(name: "Utrecht", lat: 52.0907, long: 5.1214))
+
+        viewModel.deleteLocations(at: IndexSet(integer: 1))
+
+        #expect(viewModel.locations.count == 2)
+        #expect(viewModel.locations[0].name == "Amsterdam")
+        #expect(viewModel.locations[1].name == "Utrecht")
+    }
+
     @Test func remoteRepositoryFetchesLocations() async throws {
         let json = """
         {

@@ -22,6 +22,7 @@ Branching strategy:
 
 
 Plan:
+v Model (entity) and viewModel
 v Remote repository
 v Remote repo tests
 v View (re-use ContentView?)
@@ -30,9 +31,9 @@ v Wikipedia-app: (note: follow wmf and other naming conventions in that app)
   v Receive link
   v Parse link and perform navigation to Places tab
   v Position map to received location.
-- Add (and delete) locations, simple UI first, optionally using MapKit later
+v Add (and delete) locations, simple UI first, optionally using MapKit later
 - Some accessibility features
-- Polish (composition root, app icon, point vs comma handling, ..)
+- Polish (composition root, app icon, point vs comma handling, handling nil name, handle empty state, ..)
 - Verify (feature complete? Bonus points? Cleanup any debugging code, regression test Wiki places link)
 
 Decide:
