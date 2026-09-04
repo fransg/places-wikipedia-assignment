@@ -37,9 +37,10 @@ v Some accessibility features
   v Voice over on main page and Add Location dialog
   v Dynamic type (out of the box)
   v Accessibility identifiers (can be used by UI-test)
-- Polish:
-    v add composition root, app icon, handling nil name, isLoading state, handle empty state, point vs comma handling
-- Verify (feature complete? Bonus points? Cleanup any debugging code, regression test Wiki places link)
+v Polish:
+    v add composition root, app icon, handling nil name, isLoading state, handle empty state, point vs comma handling, add UI-test
+- Verify:
+  -  feature complete? Bonus points? Cleanup any debugging code, regression test Wiki places link
 
 Decide:
 v Support dark mode or not? A: Support out of the box dark mode and light mode

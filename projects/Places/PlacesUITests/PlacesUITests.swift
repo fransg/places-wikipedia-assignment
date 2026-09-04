@@ -10,32 +10,47 @@ import XCTest
 final class PlacesUITests: XCTestCase {
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testAddsAndDeletesCustomLocation() throws {
         let app = XCUIApplication()
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // XCUIAutomation Documentation
-        // https://developer.apple.com/documentation/xcuiautomation
+        let loadingIndicator = app.activityIndicators["LocationsLoadingIndicator"]
+        if loadingIndicator.exists {
+            XCTAssertTrue(loadingIndicator.waitForNonExistence(timeout: 10))
+        }
+
+        app.buttons["AddLocation"].tap()
+
+        let nameTextField = app.textFields["CustomLocationName"]
+        XCTAssertTrue(nameTextField.waitForExistence(timeout: 5))
+        nameTextField.tap()
+        nameTextField.typeText("Greenland")
+
+        let latitudeTextField = app.textFields["CustomLocationLatitude"]
+        latitudeTextField.tap()
+        latitudeTextField.typeText("76.390857")
+
+        let longitudeTextField = app.textFields["CustomLocationLongitude"]
+        longitudeTextField.tap()
+        longitudeTextField.typeText("-40.707943")
+
+        app.buttons["Add"].tap()
+
+        let greenlandRow = app.buttons["Greenland"]
+        XCTAssertTrue(greenlandRow.waitForExistence(timeout: 5))
+
+        greenlandRow.swipeLeft()
+        app.buttons["Delete"].tap()
+
+        XCTAssertFalse(greenlandRow.waitForExistence(timeout: 2))
     }
 
     @MainActor
     func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
         measure(metrics: [XCTApplicationLaunchMetric()]) {
             XCUIApplication().launch()
         }
