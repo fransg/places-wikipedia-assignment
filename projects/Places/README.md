@@ -8,7 +8,7 @@ Architecture outline:
 - Repository for Locations, conforming to a protocol for testability
 - Tests using SwiftTesting, using mock data and repository stub
 - Some accessibility (dynamic type, maybe colorscheme, maybe more)
-- Composition root? tbd
+- Composition root
 
 
 Out of scope:
@@ -35,8 +35,8 @@ v Wikipedia-app: (note: follow wmf and other naming conventions in that app)
 v Add (and delete) locations, simple UI first, optionally using MapKit later
 - Some accessibility features
 - Polish:
-    - composition root, point vs comma handling, handling nil name, handle empty state, ..)
-    v app icon
+    - point vs comma handling, handle empty state, isLoading state..)
+    v add composition root, app icon, handling nil name
 - Verify (feature complete? Bonus points? Cleanup any debugging code, regression test Wiki places link)
 
 Decide:

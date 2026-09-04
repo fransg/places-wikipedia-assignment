@@ -9,9 +9,13 @@ import SwiftUI
 
 struct LocationsView: View {
     
-    @State private var viewModel = LocationsViewModel(repository: RemoteLocationsRepository())
+    @State private var viewModel: LocationsViewModel
     @State private var isShowingCannotOpenWikipediaAlert = false
     @State private var isShowingAddLocation = false
+    
+    init(viewModel: LocationsViewModel) {
+        self.viewModel = viewModel
+    }
     
     var body: some View {
         VStack {
@@ -222,5 +226,7 @@ private struct AddLocationView: View {
 }
 
 #Preview {
-    LocationsView()
+    LocationsView(
+        viewModel: LocationsViewModel(repository: RemoteLocationsRepository())
+    )
 }

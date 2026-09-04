@@ -12,7 +12,7 @@ struct PlacesApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack {
-                LocationsView()
+                CompositionRoot.makeLocationsView()
             }
         }
     }
