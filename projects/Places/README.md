@@ -26,11 +26,14 @@ v Remote repository
 v Remote repo tests
 v View (re-use ContentView?)
 v Link to Wikipedia (sending side)
-- Wikipedia-app: (note: follow wmf and other naming conventions in that app)
+v Wikipedia-app: (note: follow wmf and other naming conventions in that app)
   v Receive link
   v Parse link and perform navigation to Places tab
-  - Position map to received location.
+  v Position map to received location.
+- Add (and delete) locations, simple UI first, optionally using MapKit later
 - Some accessibility features
+- Polish
+- Verify (feature complete? Bonus points? Cleanup any debugging code, regression test Wiki places link)
 
 Decide:
 - Support dark mode or not?

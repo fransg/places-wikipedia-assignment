@@ -2286,6 +2286,13 @@ class PlacesViewController: ArticleLocationCollectionViewController, UISearchBar
         view.heading = heading.trueHeading
     }
 
+    func showCoordinate(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
+        loadViewIfNeeded()
+        panMapToNextLocationUpdate = false
+        updateViewModeToMap()
+        zoomAndPanMapView(toLocation: CLLocation(latitude: latitude, longitude: longitude))
+    }
+
     func zoomAndPanMapView(toLocation location: CLLocation) {
         let region = [location.coordinate].wmf_boundingRegion(with: 10000)
         mapRegion = region
