@@ -184,11 +184,6 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
         return nil;
     }
     
-    fprintf(stderr, "Wikipedia URL received stage 1: %s\n", url.absoluteString.UTF8String);
-    fprintf(stderr, "Wikipedia URL path received: %s\n", url.path.UTF8String);
-    fprintf(stderr, "Wikipedia URL scheme: %s\n", url.scheme.UTF8String);
-    fprintf(stderr, "Wikipedia URL query: %s\n", url.query.UTF8String);
-
     if ([url.host isEqualToString:@"content"]) {
         return [self wmf_contentActivityWithURL:url];
     } else if ([url.host isEqualToString:@"explore"]) {
@@ -233,7 +228,6 @@ __attribute__((annotate("returns_localized_nsstring"))) static inline NSString *
             return nil;
         }
 
-        fprintf(stderr, "Wikipedia Places openPlace parsed: lat=%f long=%f\n", latitude, longitude);
         return [self wmf_placesActivityWithLatitude:latitude longitude:longitude];
     } else {
         NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];

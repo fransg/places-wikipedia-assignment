@@ -97,8 +97,6 @@ struct LocationsView: View {
     }
     
     private func onSelectLocation(_ location: Location) {
-        print("Tapped location: \(location)")
-        
         guard let url = URL(string: "wikipedia-places://openPlace?lat=\(location.lat)&long=\(location.long)") else {
             return
         }
