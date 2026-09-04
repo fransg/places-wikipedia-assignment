@@ -18,7 +18,7 @@ struct LocationsView: View {
     }
     
     var body: some View {
-        VStack {
+        ZStack {
             List {
                 ForEach(viewModel.locations, id: \.name) { location in
                     Button {
@@ -46,9 +46,17 @@ struct LocationsView: View {
                     viewModel.deleteLocations(at: offsets)
                 }
             }
-            .task {
-                await viewModel.loadLocations()
+
+            if viewModel.isLoading {
+                ProgressView("Loading locations")
+                    .padding()
+                    .background(.regularMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .accessibilityIdentifier("LocationsLoadingIndicator")
             }
+        }
+        .task {
+            await viewModel.loadLocations()
         }
         .padding(0)
         .navigationTitle("Locations")
