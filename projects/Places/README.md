@@ -19,6 +19,7 @@ Out of scope:
 Branching strategy:
 - Just a development branch, no feature branches
 - Frequent commits
+- Modified Wikipedia app and new Places app together in a monorepo
 
 
 Plan:
@@ -37,9 +38,9 @@ v Add (and delete) locations, simple UI first, optionally using MapKit later
 - Verify (feature complete? Bonus points? Cleanup any debugging code, regression test Wiki places link)
 
 Decide:
-- Support dark mode or not?
-- Orientations to support? Just portrait?
-- Whether to rename 'location' to 'place'. It feels inconsistent now.
+v Support dark mode or not? A: Support out of the box dark mode and light mode
+v Orientations to support? Just portrait? A: Any orientation supported, nothing breaks in landscape
+v Whether to rename 'location' to 'place'. It feels inconsistent now. A: Keep as is: App is called Places, and it deals with Locations
 v Validation on add location input:
     v Name mandatory and no duplicates allowed
     v Validate lat numeric -90..+90 and numeric long -180..+180 
