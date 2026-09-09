@@ -245,6 +245,8 @@ private struct AddLocationView: View {
         }
     }
 
+    // FG Remarks after review: most of the logic below should have gone into a viewModel instead.
+    
     private func addLocation() {
         hasSubmitted = true
 
