@@ -62,7 +62,7 @@ final class LocationsViewModel {
     }
     
     func parseCoordinate(_ text: String) -> Double? {
-        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedText = text.trimmed
         
         if let number = coordinateFormatter.number(from: trimmedText) {
             return number.doubleValue

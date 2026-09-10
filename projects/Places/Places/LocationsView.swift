@@ -140,7 +140,7 @@ private struct AddLocationView: View {
     }
 
     private var trimmedName: String {
-        name.trimmingCharacters(in: .whitespacesAndNewlines)
+        name.trimmed
     }
 
     private var nameError: String? {
@@ -251,8 +251,6 @@ private struct AddLocationView: View {
         }
     }
 
-    // FG Remarks after review: most of the logic below should have gone into a viewModel instead.
-    
     private func addLocation() {
         hasSubmitted = true
 
@@ -275,7 +273,6 @@ private struct AddLocationView: View {
             focusedField = .longitude
         }
     }
-    
 }
 
 #Preview {
