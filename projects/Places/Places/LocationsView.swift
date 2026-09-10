@@ -56,15 +56,10 @@ struct LocationsView: View {
         .sheet(isPresented: $isShowingAddLocation) {
             NavigationStack {
                 AddLocationView(
-                    existingLocations: viewModel.locations,
-                    onAdd: { location in
-                        viewModel.addLocation(location)
+                    viewModel: viewModel,
+                    onDismiss: {
                         isShowingAddLocation = false
-                    },
-                    onCancel: {
-                        isShowingAddLocation = false
-                    },
-                    viewModel: viewModel
+                    }
                 )
             }
         }
@@ -122,14 +117,9 @@ struct LocationsView: View {
 }
 
 private struct AddLocationView: View {
-    let existingLocations: [Location]
-    let onAdd: (Location) -> Void
-    let onCancel: () -> Void
-    let viewModel: LocationsViewModel
+    @Bindable var viewModel: LocationsViewModel
+    let onDismiss: () -> Void
 
-    @State private var name = ""
-    @State private var latitude = ""
-    @State private var longitude = ""
     @State private var hasSubmitted = false
     @AccessibilityFocusState private var focusedField: Field?
 
@@ -139,88 +129,36 @@ private struct AddLocationView: View {
         case longitude
     }
 
-    private var trimmedName: String {
-        name.trimmed
-    }
-
-    private var nameError: String? {
-        if trimmedName.isEmpty {
-            return "Name is required."
-        }
-
-        if existingLocations.contains(where: { $0.name?.localizedCaseInsensitiveCompare(trimmedName) == .orderedSame }) {
-            return "A location with this name already exists."
-        }
-
-        return nil
-    }
-
-    private var latitudeValue: Double? {
-        viewModel.parseCoordinate(latitude)
-    }
-
-    private var latitudeError: String? {
-        guard let latitudeValue else {
-            return "Latitude must be a number."
-        }
-
-        if !(-90...90).contains(latitudeValue) {
-            return "Latitude must be between -90 and 90."
-        }
-
-        return nil
-    }
-
-    private var longitudeValue: Double? {
-        viewModel.parseCoordinate(longitude)
-    }
-
-    private var longitudeError: String? {
-        guard let longitudeValue else {
-            return "Longitude must be a number."
-        }
-
-        if !(-180...180).contains(longitudeValue) {
-            return "Longitude must be between -180 and 180."
-        }
-
-        return nil
-    }
-
-    private var isValid: Bool {
-        nameError == nil && latitudeError == nil && longitudeError == nil
-    }
-
     var body: some View {
         Form {
             Section("Please fill in the details:") {
                 VStack(alignment: .leading, spacing: 4) {
-                    TextField("Name", text: $name)
+                    TextField("Name", text: $viewModel.addLocationName)
                         .textInputAutocapitalization(.words)
                         .accessibilityIdentifier("CustomLocationName")
                         .accessibilityFocused($focusedField, equals: .name)
 
-                    validationText(nameError)
+                    validationText(viewModel.addLocationErrors.name)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    TextField("Latitude", text: $latitude)
+                    TextField("Latitude", text: $viewModel.addLocationLatitude)
                         .keyboardType(.numbersAndPunctuation)
                         .accessibilityIdentifier("CustomLocationLatitude")
                         .accessibilityHint("Enter a value between -90 and 90")
                         .accessibilityFocused($focusedField, equals: .latitude)
 
-                    validationText(latitudeError)
+                    validationText(viewModel.addLocationErrors.latitude)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    TextField("Longitude", text: $longitude)
+                    TextField("Longitude", text: $viewModel.addLocationLongitude)
                         .keyboardType(.numbersAndPunctuation)
                         .accessibilityIdentifier("CustomLocationLongitude")
                         .accessibilityHint("Enter a value between -180 and 180")
                         .accessibilityFocused($focusedField, equals: .longitude)
 
-                    validationText(longitudeError)
+                    validationText(viewModel.addLocationErrors.longitude)
                 }
             }
         }
@@ -229,7 +167,7 @@ private struct AddLocationView: View {
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel", role: .cancel) {
-                    onCancel()
+                    onDismiss()
                 }
             }
 
@@ -254,22 +192,19 @@ private struct AddLocationView: View {
     private func addLocation() {
         hasSubmitted = true
 
-        guard isValid,
-              let latitudeValue,
-              let longitudeValue else {
+        if viewModel.addLocationFromInput() {
+            onDismiss()
+        } else {
             focusFirstInvalidField()
-            return
         }
-
-        onAdd(Location(name: trimmedName, lat: latitudeValue, long: longitudeValue))
     }
 
     private func focusFirstInvalidField() {
-        if nameError != nil {
+        if viewModel.addLocationErrors.name != nil {
             focusedField = .name
-        } else if latitudeError != nil {
+        } else if viewModel.addLocationErrors.latitude != nil {
             focusedField = .latitude
-        } else if longitudeError != nil {
+        } else if viewModel.addLocationErrors.longitude != nil {
             focusedField = .longitude
         }
     }
