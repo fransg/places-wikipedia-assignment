@@ -55,12 +55,17 @@ struct LocationsView: View {
         }
         .sheet(isPresented: $isShowingAddLocation) {
             NavigationStack {
-                AddLocationView(existingLocations: viewModel.locations) { location in
-                    viewModel.addLocation(location)
-                    isShowingAddLocation = false
-                } onCancel: {
-                    isShowingAddLocation = false
-                }
+                AddLocationView(
+                    existingLocations: viewModel.locations,
+                    onAdd: { location in
+                        viewModel.addLocation(location)
+                        isShowingAddLocation = false
+                    },
+                    onCancel: {
+                        isShowingAddLocation = false
+                    },
+                    viewModel: viewModel
+                )
             }
         }
         .alert("Cannot open Wikipedia", isPresented: $isShowingCannotOpenWikipediaAlert) {
@@ -81,7 +86,7 @@ struct LocationsView: View {
                             .foregroundStyle(.primary)
                             .accessibilityIdentifier("LocationName")
                         
-                        Text(formatCoordinates(latitude: location.lat, longitude: location.long))
+                        Text(viewModel.formatCoordinates(latitude: location.lat, longitude: location.long))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .accessibilityIdentifier("LocationCoordinates")
@@ -91,7 +96,7 @@ struct LocationsView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(location.name ?? "Unnamed location")
-                .accessibilityValue(formatAccessibilityCoordinates(latitude: location.lat, longitude: location.long))
+                .accessibilityValue(viewModel.formatAccessibilityCoordinates(latitude: location.lat, longitude: location.long))
                 .accessibilityHint("Opens this location in Wikipedia")
             }
             .onDelete { offsets in
@@ -120,6 +125,7 @@ private struct AddLocationView: View {
     let existingLocations: [Location]
     let onAdd: (Location) -> Void
     let onCancel: () -> Void
+    let viewModel: LocationsViewModel
 
     @State private var name = ""
     @State private var latitude = ""
@@ -150,7 +156,7 @@ private struct AddLocationView: View {
     }
 
     private var latitudeValue: Double? {
-        parseCoordinate(latitude)
+        viewModel.parseCoordinate(latitude)
     }
 
     private var latitudeError: String? {
@@ -166,7 +172,7 @@ private struct AddLocationView: View {
     }
 
     private var longitudeValue: Double? {
-        parseCoordinate(longitude)
+        viewModel.parseCoordinate(longitude)
     }
 
     private var longitudeError: String? {
@@ -269,36 +275,8 @@ private struct AddLocationView: View {
             focusedField = .longitude
         }
     }
+    
 }
-
-private func formatCoordinates(latitude: Double, longitude: Double) -> String {
-    "\(formatCoordinate(latitude)); \(formatCoordinate(longitude))"
-}
-
-private func formatAccessibilityCoordinates(latitude: Double, longitude: Double) -> String {
-    "Latitude \(formatCoordinate(latitude)); longitude \(formatCoordinate(longitude))"
-}
-
-private func formatCoordinate(_ coordinate: Double) -> String {
-    coordinate.formatted(.number.precision(.fractionLength(6)))
-}
-
-private func parseCoordinate(_ text: String) -> Double? {
-    let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-
-    if let number = coordinateFormatter.number(from: trimmedText) {
-        return number.doubleValue
-    }
-
-    return Double(trimmedText.replacingOccurrences(of: ",", with: "."))
-}
-
-private let coordinateFormatter: NumberFormatter = {
-    let formatter = NumberFormatter()
-    formatter.numberStyle = .decimal
-    formatter.locale = .current
-    return formatter
-}()
 
 #Preview {
     LocationsView(

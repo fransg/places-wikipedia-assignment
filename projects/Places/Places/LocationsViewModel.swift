@@ -48,4 +48,33 @@ final class LocationsViewModel {
             locations.remove(at: offset)
         }
     }
+    
+    func formatCoordinates(latitude: Double, longitude: Double) -> String {
+        "\(formatCoordinate(latitude)); \(formatCoordinate(longitude))"
+    }
+    
+    func formatAccessibilityCoordinates(latitude: Double, longitude: Double) -> String {
+        "Latitude \(formatCoordinate(latitude)); longitude \(formatCoordinate(longitude))"
+    }
+    
+    func formatCoordinate(_ coordinate: Double) -> String {
+        coordinate.formatted(.number.precision(.fractionLength(6)))
+    }
+    
+    func parseCoordinate(_ text: String) -> Double? {
+        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if let number = coordinateFormatter.number(from: trimmedText) {
+            return number.doubleValue
+        }
+        
+        return Double(trimmedText.replacingOccurrences(of: ",", with: "."))
+    }
+    
+    private let coordinateFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = .current
+        return formatter
+    }()
 }
