@@ -1,6 +1,6 @@
 # ABN AMRO iOS Assignment
 
-Update 2026-09-11: Updated Places-app after receiving assignment feedback. Better separation between view and viewModel. Added some tests that had become possible by doing so.
+**Update 2026-09-11: Updated Places-app after receiving assignment feedback. Better separation between view and viewModel. Added some tests that had become possible by doing so.**
 
 This repository contains two iOS projects for the assignment:
 
