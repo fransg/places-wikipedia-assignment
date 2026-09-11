@@ -6,6 +6,22 @@
 //
 
 import SwiftUI
+import UIKit
+
+struct WikipediaLocationOpener: LocationOpening {
+    func openWikipedia(for location: Location) -> Bool {
+        guard let url = URL(string: "wikipedia-places://openPlace?lat=\(location.lat)&long=\(location.long)") else {
+            return false
+        }
+
+        guard UIApplication.shared.canOpenURL(url) else {
+            return false
+        }
+
+        UIApplication.shared.open(url)
+        return true
+    }
+}
 
 @MainActor
 final class CompositionRoot {
