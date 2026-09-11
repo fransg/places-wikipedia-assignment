@@ -10,7 +10,6 @@ import SwiftUI
 struct LocationsView: View {
     
     @State private var viewModel: LocationsViewModel
-    @State private var isShowingCannotOpenWikipediaAlert = false
     @State private var isShowingAddLocation = false
     
     init(viewModel: LocationsViewModel) {
@@ -63,7 +62,7 @@ struct LocationsView: View {
                 )
             }
         }
-        .alert("Cannot open Wikipedia", isPresented: $isShowingCannotOpenWikipediaAlert) {
+        .alert("Cannot open Wikipedia", isPresented: $viewModel.isShowingCannotOpenWikipediaAlert) {
             Button("OK", role: .cancel) {}
         } message: {
             Text("The Wikipedia app could not be opened. Please make sure the modified Wikipedia app is installed.")
@@ -74,7 +73,7 @@ struct LocationsView: View {
         List {
             ForEach(viewModel.locations, id: \.name) { location in
                 Button {
-                    onSelectLocation(location)
+                    viewModel.selectLocation(location)
                 } label: {
                     VStack(alignment: .leading) {
                         Text(location.name ?? "Unnamed location")
@@ -100,18 +99,6 @@ struct LocationsView: View {
         }
         .refreshable {
             await viewModel.loadLocations()
-        }
-    }
-    
-    private func onSelectLocation(_ location: Location) {
-        guard let url = URL(string: "wikipedia-places://openPlace?lat=\(location.lat)&long=\(location.long)") else {
-            return
-        }
-
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        } else {
-            isShowingCannotOpenWikipediaAlert = true
         }
     }
 }

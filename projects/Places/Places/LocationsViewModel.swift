@@ -12,6 +12,10 @@ protocol LocationsRepository {
     func fetchLocations() async throws -> [Location]
 }
 
+protocol LocationOpening {
+    func openWikipedia(for location: Location) -> Bool
+}
+
 struct AddLocationErrors: Equatable, Error {
     var name: String?
     var latitude: String?
@@ -85,9 +89,11 @@ struct AddLocationValidator {
 @Observable
 final class LocationsViewModel {
     private let repository: LocationsRepository
+    private let locationOpener: LocationOpening
 
     private(set) var locations: [Location] = []
     private(set) var isLoading = false
+    var isShowingCannotOpenWikipediaAlert = false
     var errorMessage: String?
     
     var addLocationName = ""
@@ -98,8 +104,12 @@ final class LocationsViewModel {
 
     private(set) var addLocationErrors = AddLocationErrors()
 
-    init(repository: LocationsRepository) {
+    init(
+        repository: LocationsRepository,
+        locationOpener: LocationOpening = WikipediaLocationOpener()
+    ) {
         self.repository = repository
+        self.locationOpener = locationOpener
     }
 
     func loadLocations() async {
@@ -134,6 +144,14 @@ final class LocationsViewModel {
             addLocationErrors = errors
             return false
         }
+    }
+
+    func addLocation(_ location: Location) {
+        locations.append(location)
+    }
+
+    func selectLocation(_ location: Location) {
+        isShowingCannotOpenWikipediaAlert = !locationOpener.openWikipedia(for: location)
     }
     
     private func clearAddLocationInput() {
