@@ -35,7 +35,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		CE32AF193049A34D009B3553 /* Exceptions for "Places" folder in "Places" target */ = {
+		CEE427CF3052F2F200D7BD87 /* Exceptions for "Places" folder in "Places" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -53,7 +53,7 @@
 		CE38EF143048497700C3B4F9 /* Places */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				CE32AF193049A34D009B3553 /* Exceptions for "Places" folder in "Places" target */,
+				CEE427CF3052F2F200D7BD87 /* Exceptions for "Places" folder in "Places" target */,
 			);
 			path = Places;
 			sourceTree = "<group>";
@@ -66,6 +66,11 @@
 		CE38EF2C3048497900C3B4F9 /* PlacesUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = PlacesUITests;
+			sourceTree = "<group>";
+		};
+		CEE427CD3052F29000D7BD87 /* SupportFiles */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SupportFiles;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -100,6 +105,7 @@
 			children = (
 				CE1FCEDA3048A89300907ED5 /* README.md */,
 				CE38EF143048497700C3B4F9 /* Places */,
+				CEE427CD3052F29000D7BD87 /* SupportFiles */,
 				CE1FCED630489FDF00907ED5 /* Entities */,
 				CE38EF223048497900C3B4F9 /* PlacesTests */,
 				CE38EF2C3048497900C3B4F9 /* PlacesUITests */,
@@ -135,6 +141,7 @@
 			fileSystemSynchronizedGroups = (
 				CE1FCED630489FDF00907ED5 /* Entities */,
 				CE38EF143048497700C3B4F9 /* Places */,
+				CEE427CD3052F29000D7BD87 /* SupportFiles */,
 			);
 			name = Places;
 			packageProductDependencies = (

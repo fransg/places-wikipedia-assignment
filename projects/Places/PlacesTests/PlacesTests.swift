@@ -60,6 +60,62 @@ struct PlacesTests {
     }
 
     @MainActor
+    @Test func addLocationFromInputAppendsLocationAndClearsInput() async throws {
+        let viewModel = LocationsViewModel(
+            repository: StubLocationsRepository(result: .success([]))
+        )
+        viewModel.addLocationName = "Greenland"
+        viewModel.addLocationLatitude = "76.390857"
+        viewModel.addLocationLongitude = "-40.707943"
+
+        let didAddLocation = viewModel.addLocationFromInput()
+
+        #expect(didAddLocation)
+        #expect(viewModel.locations.count == 1)
+        #expect(viewModel.locations[0].name == "Greenland")
+        #expect(viewModel.locations[0].lat == 76.390857)
+        #expect(viewModel.locations[0].long == -40.707943)
+        #expect(viewModel.addLocationName.isEmpty)
+        #expect(viewModel.addLocationLatitude.isEmpty)
+        #expect(viewModel.addLocationLongitude.isEmpty)
+        #expect(viewModel.addLocationErrors.isEmpty)
+    }
+
+    @MainActor
+    @Test func addLocationFromInputRejectsDuplicateName() async throws {
+        let viewModel = LocationsViewModel(
+            repository: StubLocationsRepository(result: .success([]))
+        )
+        viewModel.addLocation(Location(name: "Greenland", lat: 76.390857, long: -40.707943))
+        viewModel.addLocationName = "greenland"
+        viewModel.addLocationLatitude = "70"
+        viewModel.addLocationLongitude = "-40"
+
+        let didAddLocation = viewModel.addLocationFromInput()
+
+        #expect(didAddLocation == false)
+        #expect(viewModel.locations.count == 1)
+        #expect(viewModel.addLocationErrors.name == "A location with this name already exists.")
+    }
+
+    @MainActor
+    @Test func addLocationFromInputRejectsOutOfRangeCoordinates() async throws {
+        let viewModel = LocationsViewModel(
+            repository: StubLocationsRepository(result: .success([]))
+        )
+        viewModel.addLocationName = "Invalid Coordinates"
+        viewModel.addLocationLatitude = "91"
+        viewModel.addLocationLongitude = "-181"
+
+        let didAddLocation = viewModel.addLocationFromInput()
+
+        #expect(didAddLocation == false)
+        #expect(viewModel.locations.isEmpty)
+        #expect(viewModel.addLocationErrors.latitude == "Latitude must be between -90 and 90.")
+        #expect(viewModel.addLocationErrors.longitude == "Longitude must be between -180 and 180.")
+    }
+
+    @MainActor
     @Test func deleteLocationsRemovesLocationsAtOffsets() async throws {
         let viewModel = LocationsViewModel(
             repository: StubLocationsRepository(result: .success([]))
@@ -73,6 +129,38 @@ struct PlacesTests {
         #expect(viewModel.locations.count == 2)
         #expect(viewModel.locations[0].name == "Amsterdam")
         #expect(viewModel.locations[1].name == "Utrecht")
+    }
+
+    @MainActor
+    @Test func selectLocationOpensLocationInWikipedia() async throws {
+        let locationOpener = StubLocationOpener(result: true)
+        let viewModel = LocationsViewModel(
+            repository: StubLocationsRepository(result: .success([])),
+            locationOpener: locationOpener
+        )
+        let location = Location(name: "Greenland", lat: 76.390857, long: -40.707943)
+
+        viewModel.selectLocation(location)
+
+        #expect(locationOpener.openedLocations.count == 1)
+        #expect(locationOpener.openedLocations[0].name == "Greenland")
+        #expect(locationOpener.openedLocations[0].lat == 76.390857)
+        #expect(locationOpener.openedLocations[0].long == -40.707943)
+        #expect(viewModel.isShowingCannotOpenWikipediaAlert == false)
+    }
+
+    @MainActor
+    @Test func selectLocationShowsAlertWhenWikipediaCannotBeOpened() async throws {
+        let locationOpener = StubLocationOpener(result: false)
+        let viewModel = LocationsViewModel(
+            repository: StubLocationsRepository(result: .success([])),
+            locationOpener: locationOpener
+        )
+
+        viewModel.selectLocation(Location(name: "Greenland", lat: 76.390857, long: -40.707943))
+
+        #expect(locationOpener.openedLocations.count == 1)
+        #expect(viewModel.isShowingCannotOpenWikipediaAlert)
     }
 
     @Test func remoteRepositoryFetchesLocations() async throws {
@@ -137,6 +225,20 @@ private struct StubLocationsRepository: LocationsRepository {
 
     func fetchLocations() async throws -> [Location] {
         try result.get()
+    }
+}
+
+private final class StubLocationOpener: LocationOpening {
+    private let result: Bool
+    private(set) var openedLocations: [Location] = []
+
+    init(result: Bool) {
+        self.result = result
+    }
+
+    func openWikipedia(for location: Location) -> Bool {
+        openedLocations.append(location)
+        return result
     }
 }
 
